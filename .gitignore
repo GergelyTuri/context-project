@@ -1,0 +1,5 @@
+.conda
+data
+*.pdf
+docs/drive_files.txt
+docs/notes_from_gergo.md
