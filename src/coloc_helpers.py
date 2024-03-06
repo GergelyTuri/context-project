@@ -148,6 +148,25 @@ def plot_distances(
     return ax
 
 
+def convert_image(image_path: str):
+    """
+    Downsamples an image by a given factor. Helper function for Plotly visualization.
+
+    Parameters:
+    - image_path (str): The path to the input image.
+    - factor (int): The downsampling factor. Default is 1.
+
+    Returns:
+    - np.ndarray: The downsampled image as a NumPy array.
+    """
+    img = Image.open(image_path)
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    data_uri = "data:image/png;base64," + img_str
+    return data_uri, img
+
+
 def plot_distances_plotly(
     dataframe: pd.DataFrame, distance: float = 15.0, image_path=None
 ):
@@ -176,12 +195,7 @@ def plot_distances_plotly(
 
     # If an image path is provided, display the image as the background
     if image_path:
-        img = Image.open(image_path)
-        # Convert the image to a data URI
-        buffered = BytesIO()
-        img.save(buffered, format="PNG")
-        img_str = base64.b64encode(buffered.getvalue()).decode()
-        data_uri = "data:image/png;base64," + img_str
+        img, data_uri = convert_image(image_path)
         # Add the image to the figure
         fig.add_layout_image(
             dict(
@@ -217,7 +231,7 @@ def plot_distances_plotly(
             mode="markers",
             marker=dict(
                 size=10,
-                color="black",  # Adjust color as needed
+                color="black",
                 opacity=1,
                 symbol="circle-open",
             ),
