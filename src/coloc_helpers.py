@@ -164,7 +164,7 @@ def convert_image(image_path: str):
     img.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode()
     data_uri = "data:image/png;base64," + img_str
-    return data_uri, img
+    return img, data_uri
 
 
 def plot_distances_plotly(
