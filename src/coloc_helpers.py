@@ -126,14 +126,16 @@ def plot_distances(
         ax.imshow(image)
         ax.axis("off")  # Optionally hide the axis
 
-    df_filtered = dataframe[dataframe["Distance"] < distance]
+    df_filtered = dataframe[dataframe["Distance"] < distance].copy()
+
     columns_to_convert = [
         "Type1_MarkerX",
         "Type1_MarkerY",
         "Type2_MarkerX",
         "Type2_MarkerY",
     ]
-    df_filtered[columns_to_convert] = df_filtered[columns_to_convert].astype(float)
+    for column in columns_to_convert:
+        df_filtered.loc[:, column] = df_filtered[column].astype(float)
 
     # Create a scatter plot over the image with empty circle markers
     sns.scatterplot(
