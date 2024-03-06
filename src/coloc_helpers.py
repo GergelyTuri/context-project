@@ -102,6 +102,31 @@ def calc_pairwise_dist(dataframe: pd.DataFrame):
     return df_closest
 
 
+def distance_filter(dataframe: pd.DataFrame, distance: float = 15.0):
+    """
+    Filters the input DataFrame based on the distance between Type 1 and Type 2 points.
+
+    Parameters:
+    - dataframe (pd.DataFrame): The input DataFrame containing the data to be filtered.
+    - distance (float): The maximum distance for filtering the data. Default is 15.0.
+
+    Returns:
+    - pd.DataFrame: The filtered DataFrame containing only the rows with distances less than the specified value.
+    """
+    df_filtered = dataframe[dataframe["Distance"] < distance].copy()
+
+    columns_to_convert = [
+        "Type1_MarkerX",
+        "Type1_MarkerY",
+        "Type2_MarkerX",
+        "Type2_MarkerY",
+    ]
+    for column in columns_to_convert:
+        df_filtered.loc[:, column] = df_filtered[column].astype(float)
+
+    return dataframe[dataframe["Distance"] < distance]
+
+
 def plot_distances(
     dataframe: pd.DataFrame, distance: float = 15.0, ax=None, image_path=None
 ):
@@ -126,16 +151,7 @@ def plot_distances(
         ax.imshow(image)
         ax.axis("off")  # Optionally hide the axis
 
-    df_filtered = dataframe[dataframe["Distance"] < distance].copy()
-
-    columns_to_convert = [
-        "Type1_MarkerX",
-        "Type1_MarkerY",
-        "Type2_MarkerX",
-        "Type2_MarkerY",
-    ]
-    for column in columns_to_convert:
-        df_filtered.loc[:, column] = df_filtered[column].astype(float)
+    df_filtered = distance_filter(dataframe, distance)
 
     # Create a scatter plot over the image with empty circle markers
     sns.scatterplot(
@@ -183,14 +199,7 @@ def plot_distances_plotly(
     Returns:
     - fig (go.Figure): The Plotly figure object representing the scatter plot.
     """
-    df_filtered = dataframe[dataframe["Distance"] < distance]
-    columns_to_convert = [
-        "Type1_MarkerX",
-        "Type1_MarkerY",
-        "Type2_MarkerX",
-        "Type2_MarkerY",
-    ]
-    df_filtered[columns_to_convert] = df_filtered[columns_to_convert].astype(float)
+    df_filtered = distance_filter(dataframe, distance)
 
     # Initialize the figure
     fig = go.Figure()
