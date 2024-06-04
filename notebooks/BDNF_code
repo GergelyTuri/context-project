@@ -1,0 +1,162 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load the two CSV files into DataFrames
+df1 = pd.read_csv('experimental_groups.csv')
+df2 = pd.read_csv('preliminary_data.csv')
+
+# Merge the DataFrames on a common column
+merged_df = pd.merge(df1, df2, on='animal_ID')
+
+# Save the merged DataFrame to a new CSV file
+merged_df.to_csv('merged_file.csv', index=False)
+
+# Load the merged CSV file into a DataFrame
+df = pd.read_csv('merged_file.csv')
+
+# Calculate the mean and standard error for each group
+grouped = df.groupby('group')['mean/volume'].agg(['mean', 'sem']).reset_index()
+
+# Filter the groups
+pcb = grouped[grouped['group'] == 'pcb']
+ctrl = grouped[grouped['group'] == 'ctrl']
+
+# Plot the data
+fig, ax = plt.subplots()
+
+# Bar plots with error bars
+ax.bar('pcb', pcb['mean'], yerr=pcb['sem'], capsize=5, label='pcb')
+ax.bar('ctrl', ctrl['mean'], yerr=ctrl['sem'], capsize=5, label='ctrl')
+
+# Overlay data points
+pcb_data = df[df['group'] == 'pcb']['mean/volume']
+ctrl_data = df[df['group'] == 'ctrl']['mean/volume']
+
+# Add scatter points for pcb group
+ax.scatter(['pcb'] * len(pcb_data), pcb_data, color='black', alpha=0.6)
+
+# Add scatter points for ctrl group
+ax.scatter(['ctrl'] * len(ctrl_data), ctrl_data, color='black', alpha=0.6)
+
+# Labels and title
+ax.set_ylabel('Mean Volume')
+ax.set_title('Mean BDNF Volume')
+ax.legend()
+
+# Show the plot
+plt.show()
+
+# Function to plot data for a specific area
+def plot_area(area_name):
+    area_df = df[df['area'] == area_name]
+
+    # Calculate the mean and standard error for each group
+    grouped = area_df.groupby('group')['mean/volume'].agg(['mean', 'sem']).reset_index()
+
+    # Filter the groups
+    pcb = grouped[grouped['group'] == 'pcb']
+    ctrl = grouped[grouped['group'] == 'ctrl']
+
+    # Plot the data
+    fig, ax = plt.subplots()
+
+    # Bar plots with error bars
+    ax.bar('pcb', pcb['mean'], yerr=pcb['sem'], capsize=5, label='pcb')
+    ax.bar('ctrl', ctrl['mean'], yerr=ctrl['sem'], capsize=5, label='ctrl')
+
+    # Overlay data points
+    pcb_data = area_df[area_df['group'] == 'pcb']['mean/volume']
+    ctrl_data = area_df[area_df['group'] == 'ctrl']['mean/volume']
+
+    # Add scatter points for pcb group
+    ax.scatter(['pcb'] * len(pcb_data), pcb_data, color='black', alpha=0.6)
+
+    # Add scatter points for ctrl group
+    ax.scatter(['ctrl'] * len(ctrl_data), ctrl_data, color='black', alpha=0.6)
+
+    # Labels and title
+    ax.set_ylabel('Mean Volume')
+    ax.set_title(f'BDNF Volume in {area_name}')
+    ax.legend()
+
+    # Show the plot
+    plt.show()
+
+# Plot for hilus
+plot_area('hilus')
+
+# Plot for CA3
+plot_area('CA3')
+
+# Function to plot data for a specific group
+def plot_group(group_name):
+    group_df = df[df['group'] == group_name]
+    
+    # Calculate the mean and standard error for each animal
+    grouped = group_df.groupby('animal_ID')['mean/volume'].agg(['mean', 'sem']).reset_index()
+
+    # Plot the data
+    fig, ax = plt.subplots()
+
+    # Bar plots with error bars
+    ax.bar(grouped['animal_ID'], grouped['mean'], yerr=grouped['sem'], capsize=5, label=group_name)
+
+    # Overlay data points
+    for animal_id in grouped['animal_ID']:
+        animal_data = group_df[group_df['animal_ID'] == animal_id]['mean/volume']
+        ax.scatter([animal_id] * len(animal_data), animal_data, color='black', alpha=0.6)
+
+    # Labels and title
+    ax.set_ylabel('Mean Volume')
+    ax.set_title(f'BDNF mean/volume {group_name}')
+    ax.set_xticklabels(grouped['animal_ID'], rotation=45)
+    ax.legend()
+
+    # Show the plot
+    plt.show()
+
+# Plot for pcb group
+plot_group('pcb')
+
+# Plot for ctrl group
+plot_group('ctrl')
+
+# Function to plot data for a specific group and color code by sex
+def plot_group_by_sex(group_name):
+    group_df = df[df['group'] == group_name]
+    
+    # Calculate the mean and standard error for each animal
+    grouped = group_df.groupby(['animal_ID', 'sex'])['mean/volume'].agg(['mean', 'sem']).reset_index()
+
+    # Plot the data
+    fig, ax = plt.subplots()
+
+    # Bar plots with error bars
+    colors = {'f': 'pink', 'm': 'lightblue'}
+    for index, row in grouped.iterrows():
+        ax.bar(row['animal_ID'], row['mean'], yerr=row['sem'], capsize=5, color=colors[row['sex']], label=row['sex'] if index == 0 else "")
+
+    # Overlay data points
+    for animal_id in grouped['animal_ID']:
+        animal_data = group_df[group_df['animal_ID'] == animal_id]['mean/volume']
+        ax.scatter([animal_id] * len(animal_data), animal_data, color='black', alpha=0.6)
+
+    # Labels and title
+    ax.set_ylabel('Mean Volume')
+    ax.set_title(f'Mean/Volume BDNF {group_name}')
+    ax.set_xticklabels(grouped['animal_ID'], rotation=45)
+
+    # Custom legend
+    handles = [plt.Rectangle((0,0),1,1, color=colors['f']), plt.Rectangle((0,0),1,1, color=colors['m'])]
+    labels = ['f', 'm']
+    ax.legend(handles, labels, title='Sex')
+
+    # Show the plot
+    plt.show()
+
+# Plot for pcb group with sex color coding
+plot_group_by_sex('pcb')
+
+# Plot for ctrl group with sex color coding
+plot_group_by_sex('ctrl')
