@@ -1,6 +1,5 @@
 // Pin Definitions
 int solPin1 = 6;
-int solPin2 = 5;
 int anymazePin = 11; // TTL input from AnyMaze to start
 int ledPin = 13; // LED indicates when odor is ON
 int buttonPin = 8; // Button to manually start the protocol
