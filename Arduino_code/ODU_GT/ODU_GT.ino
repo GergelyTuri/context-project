@@ -5,7 +5,7 @@ int anymazePin = 11; // TTL input from AnyMaze to start
 int ledPin = 13; // LED indicates when odor is ON
 int buttonPin = 8; // Button to manually start the protocol
 
-// Session variables
+// Trial variables
 int solDur = 5000; // Duration of odor pulse in ms
 long preOdorDur = 2000; // Delay before the odor delivery in ms
 long postOdorDur = 2000; // Delay after the odor delivery in ms
