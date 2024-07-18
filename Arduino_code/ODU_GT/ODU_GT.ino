@@ -20,7 +20,6 @@ boolean toStart = 0; // Control flag for the start of the session
 void setup() { 
   // initialize digital pins
   pinMode(solPin1, OUTPUT);
-  pinMode(solPin2, OUTPUT);
   pinMode(ledPin, OUTPUT);
   pinMode(buttonPin, INPUT_PULLUP);
   pinMode(anymazePin, INPUT);
