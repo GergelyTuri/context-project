@@ -1,4 +1,4 @@
-name: cued-fc
+name: context-project
 channels:
   - conda-forge
   - defaults
