@@ -21,7 +21,6 @@ from os.path import join
 
 import serial
 
-
 from src.serial_comm import SerialComm as sc
 
 
@@ -67,7 +66,7 @@ def main():
     # Global variables
     current_date_time = datetime.now()
     formatted_date_time = current_date_time.strftime("%Y-%m-%d_%H-%M-%S")
-    end_session_message = "Session has ended"
+    end_session_message = "Post-trial interval complete at ms: "
     session_ended = False  # Flag to indicate the end of the session
     file_name = "_".join(mouse_ids) + f"_{formatted_date_time}.json"
 
